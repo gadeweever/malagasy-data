@@ -10,12 +10,24 @@ rules = []
 
 # morphology consonant final
 # these endings are morphologically consonant final, but the language
-# does not like consonant final words. We add an a suffix
-# but only if the word would be consonant final after rule application
-def constFinal(word, set)
+# does not like consonant final words. We add an 'a' suffix
+# because the incoming data stem data is not the underlying form
+# we are positing in our analysis. This, thus stem function is applied before
+# any of the rules are applied.
+def stemSet(word, set)
   if set >= 27 && set <= 38
       return word[0..word.length-2]
-  end
+    elsif set >=37 && set <=43
+      return word[0..-3] + "h"
+    elsif set >=44 && set <= 46
+      return word[0..-3] + "f"
+    elsif set >=55 && set <= 57
+      return word + "s"
+    elsif set >=58 && set <= 63
+      return word + "z"
+    elsif set >=64 && set <= 67
+      return word + "v"
+    end
   return word
 end
 
@@ -71,11 +83,42 @@ def fusion(word)
   fusion = word[0..(index-1)] + vowel + word[(index+2)..word.length]
 end
 
+# Rule Word Final Consonant Deletion
+# if a word is consonant final s/v/z, delete it
+# this is unfortunately inconsistent with the epenthetic 'a',
+# and it begs the question, "why not an epenthetic 'a' on these stems?"
+# However it does make sense in the context of the language not
+# favoring consonant final words
+# s/v/z -> null / _#
+def constFinalDel(word)
+  pattern = /(s|z|v)$/
+  match = word.match(pattern)
+  if match == nil
+    return word
+  end
+  constFinal = word[0..-2]
+end
+
+# consonant Final Fricative Change
+# in our analysis, we posit the preference for a non fricative cononant 'k'
+# rather than an "h" or an "f"
+# h/f -> k / _#
+def constFinalFric(word)
+  pattern = /(h|f)$/
+  match = word.match(pattern)
+  if match == nil
+    return word
+  end
+  finalFric = word[0..-2] + "k"
+end
+
 rules << method(:contour1)
 rules << method(:contour2)
 # contour must be applied before fusion
 # to feed the fusion rule
 rules << method(:fusion)
+rules << method(:constFinalFric)
+rules << method(:constFinalDel)
 
 setnumber = 0
 while word = wordbatch.gets
@@ -83,7 +126,8 @@ while word = wordbatch.gets
   word = word.force_encoding(Encoding::UTF_8)
   results.print word + "    "
 
-  word = constFinal(word, setnumber)
+  word = stemSet(word, setnumber)
+  #puts word
   #puts setnumber.to_s + word
   endings.each do |ending|
     modword = word + ending
