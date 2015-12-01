@@ -1,11 +1,10 @@
-# malagasy-data
-## Malagasy analysis ruby implementation
+# Malagasy analysis ruby implementation
 
 ## Running
 ```
 ruby malagasy.rb
 ```
-
+We run this in your favorite console program. The implementation was run under Ruby 2.0 but should also work under 1.9
 ##Output
 The script will run and generate the results it finds in "results.txt".
 
