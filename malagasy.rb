@@ -100,7 +100,7 @@ def constFinalDel(word)
 end
 
 # consonant Final Fricative Change
-# in our analysis, we posit the preference for a non fricative cononant 'k'
+# in our analysis, we posit the preference for a non fricative consonant 'k'
 # rather than an "h" or an "f"
 # h/f -> k / _#
 def constFinalFric(word)
@@ -112,6 +112,18 @@ def constFinalFric(word)
   finalFric = word[0..-2] + "k"
 end
 
+# Epenthetic 'a'
+# in the case that we have a word final consonant, we insert
+# an 'a' to keep the language consistent
+def epentheticA(word)
+  pattern = /[^(a|i|u|o)]$/
+  match = word.match(pattern)
+  if match == nil
+    return word
+  end
+  epiA = word + "a"
+end
+
 rules << method(:contour1)
 rules << method(:contour2)
 # contour must be applied before fusion
@@ -119,6 +131,7 @@ rules << method(:contour2)
 rules << method(:fusion)
 rules << method(:constFinalFric)
 rules << method(:constFinalDel)
+rules << method(:epiA)
 
 setnumber = 0
 while word = wordbatch.gets
