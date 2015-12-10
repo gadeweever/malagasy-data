@@ -1,4 +1,7 @@
 require './syllable.rb'
+
+maxlength = ARGV[1]
+
 # our file for
 results = File.open("stress-results.txt", "w")
 
@@ -74,7 +77,39 @@ def checkStress(syllable)
   return true
 end
 
+# register each rule
 rules << method(:firstPrimary)
 rules << method(:noStressFinal)
 rules << method(:secondaryOther)
 rules << method(:clashCheck)
+
+# we establish the permutations here so we
+# can mix up all the rules. Super cool!
+permutes = rules.permutation.to_a
+
+# we want to generate our word sets now. this will store all
+# of our word values
+wordsets = []
+
+# we generate the number of word sets per permutes
+for i in 0..permutes.count
+  # maxlength words, j amount of
+  wordsets << WordSet.new(maxlength)
+end
+
+# ask for each permute
+permutes.each_with_index do |permute, index|
+
+  # choose a word set that corresponds to what this
+  # permute will do. Select all the words in this set
+  wordsets[index].words.each do |word|
+
+    # call each rule on the word
+    permute.each do |rule|
+      rule.call word
+    end
+
+    #print the contents to a file
+    wordset.output(results)
+  end
+end
