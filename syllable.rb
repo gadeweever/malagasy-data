@@ -1,0 +1,2 @@
+class Syllable
+end
