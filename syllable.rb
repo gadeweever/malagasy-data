@@ -6,6 +6,8 @@ module StressType
   SECONDARY = 2
 end
 
+# A Syllable is a basic unit that
+# holds stress
 class Syllable
   attr_accessor :stress
 
@@ -17,7 +19,7 @@ class Syllable
     @stress != StressType::NONE
 end
 
-
+# A word holds syllables
 class Word
   attr_access :syllables
 

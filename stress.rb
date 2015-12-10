@@ -5,6 +5,11 @@ results = File.open("stress-results.txt", "w")
 # We establish our empty ruleset
 rules = []
 
+# clash check
+# this determines whether or not we should
+# apply the clash rule
+clash = false
+
 # First Syllable Primary
 def firstPrimary(word)
   word.syllables[0].stress = StressType::PRIMARY
@@ -38,4 +43,38 @@ def secondaryOther(word)
   end
 end
 
+# clash Check
+# asks if we should establish clash checking
+# Takes a word for method hash
+def clashCheck(word)
+  clash = true
+end
+
 # Clash Checking
+# no two syllables next to each other should have stress
+# if they return false
+def boundaryCheck(syllable1, syllable2)
+  return checkStress(syllable1) && checkStress(syllable2)
+end
+
+# safely checks the stress of a syllable
+def checkStress(syllable)
+  # this catches the first syllable
+  if syllable == nil
+    return true
+  end
+
+  # if the previous syllable had stress
+  # then we shouldn't apply the rule
+  if syllable.hasStress
+    return false
+  end
+
+  # return true otherwise
+  return true
+end
+
+rules << method(:firstPrimary)
+rules << method(:noStressFinal)
+rules << method(:secondaryOther)
+rules << method(:clashCheck)
