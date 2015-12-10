@@ -19,7 +19,8 @@ class Syllable
     @stress != StressType::NONE
   end
 
-  def output
+  # just output a value for the syllable
+  def to_s
     if @stress == StressType::NONE
       return "N"
     elsif @stress == StressType::PRIMARY
@@ -28,6 +29,7 @@ class Syllable
       return "S"
     end
   end
+
 end
 
 # A word holds syllables
@@ -49,10 +51,10 @@ class Word
   end
 
   # reads each syllable and returns its stress
-  def output
+  def to_s
     out = ""
     @syllables.each do |syllable|
-      out << syllable.output << " "
+      out << syllable.to_s << " "
     end
     return out.strip
   end
@@ -74,7 +76,8 @@ class WordSet
   def output(file)
     # write each word to the file
     @words.each do |word|
-      file.puts word.output
+      file.puts word
     end
+  end
 
 end
