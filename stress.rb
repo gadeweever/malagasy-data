@@ -11,13 +11,13 @@ rules = []
 # clash check
 # this determines whether or not we should
 # apply the clash rule
-$clash = false
+$clash = 0
 
 # First Syllable Primary
 def firstPrimary(word)
   current_stress =  word.syllables[0].stress
   word.syllables[0].stress = StressType::PRIMARY
-  if $clash then
+  if $clash == 1 then
     if boundaryCheck(word.syllables[1], nil)
         word.syllables[0].stress = current_stress
     end
@@ -30,13 +30,13 @@ end
 # then we put primary stress on the final syllable
 def noStressFinal(word)
   word.syllables.each do |syllable|
-    # if we fund stress, short circuit
+    # if we find stress, short circuit
     if syllable.hasStress
       return word
     end
   end
 
-  if $clash
+  if $clash == 1
     then if !boundaryCheck(word.syllables[word.syllables.count-1], nil)
   # we found no stress, so stress the last one
     return word
@@ -50,14 +50,15 @@ end
 # every other syllable should have secondary stress
 # this rule applies from left to right
 def secondaryOther(word)
+    puts word
   word.syllables.each_with_index do |syllable, index|
 
     #stress every other
-    if index % 2 == 1 then
+    if index % 2 == 0 then
       current_stress = syllable.stress
         if !syllable.hasStress
           syllable.stress = StressType::SECONDARY
-          if $clash then
+          if $clash == 1 then
             if !boundaryCheck(word.syllables[index-1], word.syllables[index+1])
               syllable.stress = current_stress
             end
@@ -65,6 +66,7 @@ def secondaryOther(word)
         end
       end
     end
+    return word
 end
 
 
@@ -72,7 +74,8 @@ end
 # asks if we should establish clash checking
 # Takes a word for method hash
 def clashCheck(word)
-  $clash = true
+  $clash = 1
+  return word
 end
 
 # Clash Checking
@@ -122,13 +125,13 @@ end
 
 # ask for each permute
 permutes.each_with_index do |permute, index|
-
+  #puts "the value of this is: " << $clash.to_s
   #we keep trach of each permuation
   results.print index.to_s << ". "
   permute.each_with_index do |m, index|
     results.print m.name.to_s << " "
   end
-
+    #puts "the value of this is: " << $clash.to_s
   results.puts ""
   # choose a word set that corresponds to what this
   # permute will do. Select all the words in this set
@@ -136,11 +139,11 @@ permutes.each_with_index do |permute, index|
 
     # call each rule on the word
     permute.each do |rule|
-      rule.call word
+      word = rule.call word
     end
-    #print the contents to a file
 
+    # reset clash for next word
+    $clash = 0
   end
   wordsets[index].output(results)
-  $clash = false
 end

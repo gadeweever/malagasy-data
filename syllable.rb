@@ -16,7 +16,7 @@ class Syllable
   end
 
   def hasStress
-    @stress != StressType::NONE
+    return @stress != StressType::NONE
   end
 
   # just output a value for the syllable
@@ -54,7 +54,7 @@ class Word
   # reads each syllable and returns its stress
   def to_s
     out = ""
-    @syllables.reverse.each do |syllable|
+    @syllables.each do |syllable|
       out << syllable.to_s << " "
     end
     return out.strip
