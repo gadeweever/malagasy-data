@@ -1,0 +1,62 @@
+0. firstPrimary noStressFinal secondaryOther clashCheck
+P
+P S
+P S N
+P S N S
+P S N S N
+
+1. firstPrimary noStressFinal clashCheck secondaryOther
+P
+P N
+P N N
+P N N S
+P N N S N
+
+6. noStressFinal firstPrimary secondaryOther clashCheck
+P
+P P
+P S P
+P S N P
+P S N S P
+
+7. noStressFinal firstPrimary clashCheck secondaryOther
+P
+P P
+P N P
+P N N P
+P N N N P
+
+8. noStressFinal secondaryOther firstPrimary clashCheck
+P
+P P
+P S P
+P S N P
+P S N S P
+
+9. noStressFinal secondaryOther clashCheck firstPrimary
+P
+N P
+N S P
+N S N P
+N S N S P
+
+10. noStressFinal clashCheck firstPrimary secondaryOther
+P
+N P
+P N P
+P N N P
+P N N N P
+
+11. noStressFinal clashCheck secondaryOther firstPrimary
+P
+N P
+P N P
+N S N P
+N S N N P
+
+15. secondaryOther noStressFinal clashCheck firstPrimary
+P
+N S
+N S N
+N S N S
+N S N S N

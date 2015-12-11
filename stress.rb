@@ -2,7 +2,13 @@ require './syllable.rb'
 
 maxlength = ARGV[0].chomp.to_i
 
-# our file for
+#check the validity of the argument
+if maxlength < 1
+  puts "We can't generate non-zero words"
+  exit(1)
+end
+
+# our file for results
 results = File.open("stress-results.txt", "w")
 
 # We establish our empty ruleset
@@ -16,6 +22,8 @@ $clash = false
 # First Syllable Primary
 def firstPrimary(word)
   word.syllables[0].stress = StressType::PRIMARY
+
+  # check the surrounding stresses
   if $clash then
     if !boundaryCheck(word.syllables[1], nil)
         word.syllables[0].stress = StressType::NONE
