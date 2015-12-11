@@ -15,7 +15,14 @@ clash = false
 
 # First Syllable Primary
 def firstPrimary(word)
+  current_stress =  word.syllables[0].stress
   word.syllables[0].stress = StressType::PRIMARY
+  if clash then
+    if boundaryCheck(word.syllable[1], word.Syllable[1])
+        word.syllables[0].stress = current_stress
+    end
+  end
+  return word
 end
 
 # Stressing the Final syllable
@@ -29,8 +36,12 @@ def noStressFinal(word)
     end
   end
 
+  if clash
+    then if boundaryCheck(word.syllables[word.syllables.count-1], nil)
   # we found no stress, so stress the last one
-  word.syllables.last.stress = StressType::PRIMARY
+    word.syllables.last.stress = StressType::PRIMARY
+    end
+  end
   return word
 end
 
@@ -40,8 +51,13 @@ end
 def secondaryOther(word)
   word.syllables.each_with_index do |syllable, index|
     #stress every other
+
     if index % 2 == 0 then
-      syllable.stress = StressType::SECONDARY
+      if boundaryCheck(word.syllables[index-1], word.syllables[index+1])
+        if !syllable.hasStress
+          syllable.stress = StressType::SECONDARY
+        end
+      end
     end
   end
 end
@@ -108,7 +124,11 @@ permutes.each_with_index do |permute, index|
     permute.each do |rule|
       rule.call word
     end
-
+    permute.each_with_index do |m, index|
+      print index.to_s << " "
+    end
+    puts ""
+     
     #print the contents to a file
     wordset.output(results)
   end

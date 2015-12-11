@@ -78,6 +78,7 @@ class WordSet
     @words.each do |word|
       file.puts word
     end
+    puts ""
   end
 
 end
