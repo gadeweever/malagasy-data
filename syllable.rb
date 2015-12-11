@@ -38,7 +38,8 @@ class Word
 
   # creates a word of a certain length
   def initialize(length)
-    for i in 0..length
+    @syllables = []
+    for i in 1..length
       @syllables << Syllable.new
     end
   end
@@ -53,7 +54,7 @@ class Word
   # reads each syllable and returns its stress
   def to_s
     out = ""
-    @syllables.each do |syllable|
+    @syllables.reverse.each do |syllable|
       out << syllable.to_s << " "
     end
     return out.strip
@@ -67,7 +68,8 @@ class WordSet
   attr_accessor :words
 
   def initialize(length)
-    for i in 0..length
+    @words = []
+    for i in 1..length
       @words << Word.new(i)
     end
   end
@@ -78,7 +80,7 @@ class WordSet
     @words.each do |word|
       file.puts word
     end
-    puts ""
+    file.puts ""
   end
 
 end

@@ -1,6 +1,6 @@
 require './syllable.rb'
 
-maxlength = ARGV[1]
+maxlength = ARGV[0].chomp.to_i
 
 # our file for
 results = File.open("stress-results.txt", "w")
@@ -11,14 +11,14 @@ rules = []
 # clash check
 # this determines whether or not we should
 # apply the clash rule
-clash = false
+$clash = false
 
 # First Syllable Primary
 def firstPrimary(word)
   current_stress =  word.syllables[0].stress
   word.syllables[0].stress = StressType::PRIMARY
-  if clash then
-    if boundaryCheck(word.syllable[1], word.Syllable[1])
+  if $clash then
+    if boundaryCheck(word.syllables[1], nil)
         word.syllables[0].stress = current_stress
     end
   end
@@ -36,12 +36,13 @@ def noStressFinal(word)
     end
   end
 
-  if clash
-    then if boundaryCheck(word.syllables[word.syllables.count-1], nil)
+  if $clash
+    then if !boundaryCheck(word.syllables[word.syllables.count-1], nil)
   # we found no stress, so stress the last one
-    word.syllables.last.stress = StressType::PRIMARY
+    return word
     end
   end
+  word.syllables.last.stress = StressType::PRIMARY
   return word
 end
 
@@ -50,23 +51,28 @@ end
 # this rule applies from left to right
 def secondaryOther(word)
   word.syllables.each_with_index do |syllable, index|
-    #stress every other
 
-    if index % 2 == 0 then
-      if boundaryCheck(word.syllables[index-1], word.syllables[index+1])
+    #stress every other
+    if index % 2 == 1 then
+      current_stress = syllable.stress
         if !syllable.hasStress
           syllable.stress = StressType::SECONDARY
+          if $clash then
+            if !boundaryCheck(word.syllables[index-1], word.syllables[index+1])
+              syllable.stress = current_stress
+            end
+          end
         end
       end
     end
-  end
 end
+
 
 # clash Check
 # asks if we should establish clash checking
 # Takes a word for method hash
 def clashCheck(word)
-  clash = true
+  $clash = true
 end
 
 # Clash Checking
@@ -99,6 +105,7 @@ rules << method(:noStressFinal)
 rules << method(:secondaryOther)
 rules << method(:clashCheck)
 
+
 # we establish the permutations here so we
 # can mix up all the rules. Super cool!
 permutes = rules.permutation.to_a
@@ -108,7 +115,7 @@ permutes = rules.permutation.to_a
 wordsets = []
 
 # we generate the number of word sets per permutes
-for i in 0..permutes.count
+for i in 0..permutes.length
   # maxlength words, j amount of
   wordsets << WordSet.new(maxlength)
 end
@@ -116,6 +123,13 @@ end
 # ask for each permute
 permutes.each_with_index do |permute, index|
 
+  #we keep trach of each permuation
+  results.print index.to_s << ". "
+  permute.each_with_index do |m, index|
+    results.print m.name.to_s << " "
+  end
+
+  results.puts ""
   # choose a word set that corresponds to what this
   # permute will do. Select all the words in this set
   wordsets[index].words.each do |word|
@@ -124,12 +138,9 @@ permutes.each_with_index do |permute, index|
     permute.each do |rule|
       rule.call word
     end
-    permute.each_with_index do |m, index|
-      print index.to_s << " "
-    end
-    puts ""
-     
     #print the contents to a file
-    wordset.output(results)
+
   end
+  wordsets[index].output(results)
+  $clash = false
 end
